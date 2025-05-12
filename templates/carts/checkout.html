@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  checkout
+{% endblock title %}
+  
+{% block content %}
+<div class="bg-white font-[sans-serif]">
+  <div class="mx-auto w-full max-lg:max-w-xl">
+    <div class="grid gap-6 lg:grid-cols-3">
+      <div
+        class="mx-auto w-full max-w-4xl p-6 !pr-0 max-lg:order-1 lg:col-span-2"
+      >
+        <div class="text-center max-lg:hidden">
+          <h2
+            class="inline-block border-b-2 border-gray-800 pb-1 text-3xl font-extrabold text-gray-800"
+          >
+            Checkout
+          </h2>
+        </div>
+
+        <form method="post" action="{% url 'place_order' %}" class="lg:mt-16" id="checkout-form">
+          {% csrf_token %}
+          <div>
+            <h2 class="text-xl font-bold text-gray-800">Shipping info</h2>
+
+            <div class="mt-8 grid gap-8 sm:grid-cols-2">
+              <div>
+                <input
+                  type="text"
+                  placeholder="Fist Name"
+                  name="first_name"
+                  class="w-full border-b bg-white px-2 pb-2 text-sm text-gray-800 outline-none focus:border-blue-600"
+                  required
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  name="last_name"
+                  class="w-full border-b bg-white px-2 pb-2 text-sm text-gray-800 outline-none focus:border-blue-600"
+                  required
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder="Phone Number"
+                  name="phone"
+                  class="w-full border-b bg-white px-2 pb-2 text-sm text-gray-800 outline-none focus:border-blue-600"
+                  required
+                />
+              </div>
+              <div>
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  name="email"
+                  class="w-full border-b bg-white px-2 pb-2 text-sm text-gray-800 outline-none focus:border-blue-600"
+                  required
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder="State/County"
+                  name="state"
+                  class="w-full border-b bg-white px-2 pb-2 text-sm text-gray-800 outline-none focus:border-blue-600"
+                  required
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder="City"
+                  name="city"
+                  class="w-full border-b bg-white px-2 pb-2 text-sm text-gray-800 outline-none focus:border-blue-600"
+                  required
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder="Street address"
+                  name="street_address"
+                  class="w-full border-b bg-white px-2 pb-2 text-sm text-gray-800 outline-none focus:border-blue-600"
+                  required
+                />
+              </div>
+              
+              
+              <div>
+                <input
+                  type="number"
+                  placeholder="Postal code"
+                  name="postal_code"
+                  class="w-full border-b bg-white px-2 pb-2 text-sm text-gray-800 outline-none focus:border-blue-600"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-16">
+            <div class="mt-8 grid gap-8">
+
+              <div class="flex items-center">
+                <input
+                required
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  class="h-4 w-4 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+
+                <label for="remember-me" class="ml-3 block text-sm">
+                  I accept the
+                  <a
+                    href="#"
+                    class="ml-1 font-semibold text-blue-600 hover:underline"
+                    >Terms and Conditions</a
+                  >
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a href="{% url 'products' %}">
+              <button
+              type="button"
+              class="min-w-[150px] rounded-lg bg-gray-200 px-6 py-3.5 text-sm text-gray-800 hover:bg-gray-300"
+            >
+              Continue Shopping
+            </button>
+            </a>
+            
+            
+              <button
+              type="submit"
+              class="min-w-[150px] rounded-lg bg-gray-800 px-6 py-3.5 text-sm text-white hover:bg-gray-700"
+            >
+              Place Order of ${{grand_total}}
+            </button>
+            
+            
+          </div>
+        </form>
+      </div>
+      <div class="bg-gray-100 lg:sticky lg:top-0 lg:h-screen">
+        <div class="relative h-full">
+          <div
+            class="overflow-auto p-6 max-lg:mb-8 max-lg:max-h-[400px] lg:h-[calc(100vh-60px)]"
+          >
+            <h2 class="text-xl font-bold text-gray-800">Order Summary</h2>
+
+            <div class="mt-8 space-y-8">
+              {% for cart_item in cart_items %}
+              <div class="flex flex-col gap-4">
+                <div class="max-w-[140px] shrink-0 rounded-lg bg-gray-200 p-4">
+                  <img
+                    src="{{cart_item.product.image.url}}"
+                    alt=""
+                    class="w-full object-contain"
+                  />
+                </div>
+
+                <div class="w-full">
+                  <a href="{{ cart_item.product.get_url }}">
+                    <h3 class="text-base font-bold text-gray-800">
+                    {{cart_item.product.product_name}}
+                  </h3>
+                  </a>
+                  
+                  <ul class="mt-2 space-y-2 text-sm text-gray-800">
+                    {% if cart_item.variations.all %}
+                    {% for item in cart_item.variations.all %}
+                    <li class="flex flex-wrap gap-4">
+                      {{ item.variation_category | capfirst }} <span class="ml-auto">{{ item.variation_value | capfirst }}</span>
+                    </li>
+                    {% endfor %}
+                    {% endif %}
+                    <li class="flex flex-wrap gap-4">
+                      Quantity <span class="ml-auto">{{cart_item.quantity}}</span>
+                    </li>
+                    <li class="flex flex-wrap gap-4">
+                      Total Price <span class="ml-auto">${{cart_item.sub_total}}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              {% endfor %}
+
+            </div>
+          </div>
+
+          <div class="w-full bg-gray-200 p-4 lg:absolute lg:bottom-0 lg:left-0">
+            <h4 class="flex flex-wrap gap-4 text-base font-bold text-gray-800">
+              Total <span class="ml-auto">${{grand_total}}</span> <p class="text-xs">Tax and shipping inclusive</p>
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

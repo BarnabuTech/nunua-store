@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Payment
+{% endblock title %}
+
+{% block content %}
+<div class="font-sans">
+  {% if cart_items %}
+  <div class="grid gap-10 p-4 lg:grid-cols-3">
+    <div class="divide-y bg-white lg:col-span-2">
+      <!--cart item start-->
+
+      {% for cart_item in cart_items %}
+      <div class="flex items-start gap-4 py-4 max-sm:flex-col">
+        <div class="h-36 shrink-0">
+          <img
+            src="{{cart_item.product.image.url}}"
+            alt=""
+            class="h-full w-full rounded-md object-contain" />
+        </div>
+
+        <div class="flex w-full items-start gap-4">
+          <div>
+            <a href="{{ cart_item.product.get_url }}">
+              <h3 class="mb-1 text-lg font-bold text-gray-800">
+                {{cart_item.product.product_name}} </h3>
+            </a>
+
+            <div class="space-y-1">
+              {% if cart_item.variations.all %}
+              {% for item in cart_item.variations.all %}
+              <h6 class="text-sm text-gray-800">
+                {{ item.variation_category | capfirst }}: <strong
+                  class="ml-2">{{ item.variation_value | capfirst }}</strong>
+              </h6>
+              {% endfor %}
+              {% endif %}
+
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-4">
+              <button
+                type="button"
+                class="flex shrink-0 items-center gap-2 text-sm font-semibold text-pink-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="inline w-4 fill-current"
+                  viewBox="0 0 64 64">
+                  <path
+                    d="M45.5 4A18.53 18.53 0 0 0 32 9.86 18.5 18.5 0 0 0 0 22.5C0 40.92 29.71 59 31 59.71a2 2 0 0 0 2.06 0C34.29 59 64 40.92 64 22.5A18.52 18.52 0 0 0 45.5 4ZM32 55.64C26.83 52.34 4 36.92 4 22.5a14.5 14.5 0 0 1 26.36-8.33 2 2 0 0 0 3.27 0A14.5 14.5 0 0 1 60 22.5c0 14.41-22.83 29.83-28 33.14Z"
+                    data-original="#000000"></path>
+                </svg>
+                Move to wish list
+              </button>
+            </div>
+          </div>
+
+          <div class="ml-auto text-right">
+            <div class="mt-4">
+              <h4 class="mb-1 text-lg font-bold text-gray-500">
+                <strike
+                  class="font-medium">${{cart_item.total_discount}}</strike>
+              </h4>
+              <h4 class="text-lg font-bold text-gray-800">
+                ${{cart_item.sub_total}} </h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+      <!--cart item end-->
+    </div>
+
+    <div class="h-max p-6 shadow-md lg:sticky lg:top-0">
+      <h3 class="border-b pb-4 text-lg font-bold text-gray-800">
+        Order Summary
+      </h3>
+
+      <ul class="mt-4 divide-y text-gray-800">
+        <li class="flex flex-wrap gap-4 py-3 text-sm">
+          Subtotal <span class="ml-auto font-bold">${{total}} </span>
+        </li>
+        <li class="flex flex-wrap gap-4 py-3 text-sm">
+          Shipping <span class="ml-auto font-bold">${{shipping_fee}}</span>
+        </li>
+        <li class="flex flex-wrap gap-4 py-3 text-sm">
+          Tax <span class="ml-auto font-bold">${{tax}} </span>
+        </li>
+        <li class="flex flex-wrap gap-4 py-3 text-sm font-bold">
+          Total <span class="ml-auto">${{grand_total}}</span>
+        </li>
+      </ul>
+      <div id="paypal-button-container"></div>
+    </div>
+    {% else %}
+    <div class="flex items-center justify-center h-96">
+      <h3 class="text-lg font-bold text-gray-800">No items in the cart</h3>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Include the PayPal JavaScript SDK -->
+<script
+  src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD"></script>
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  var total = '{{grand_total}}';
+  var url = '{% url "payments" %}';
+  var csrftoken = getCookie("csrftoken");
+  var orderID = '{{order.order_number}}'
+  var payment_method = 'PayPal'
+  var redirect_url = '{% url "order_success" %}'
+
+  paypal.Buttons({
+    style: {
+      color: 'gold',
+      shape: 'rect',
+      label: 'paypal',
+      tagline: 'false',
+      height: 40
+    },
+    createOrder: function(data, actions) {
+      return actions.order.create({
+        purchase_units: [{
+          amount: { value: total }
+        }]
+      });
+    },
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(function(details) {
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            "content-type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+          body: JSON.stringify({
+            orderID: orderID,
+            transID: details.id,
+            payment_method: payment_method,
+            status: details.status,
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          window.location.href = redirect_url + '?order_number=' + data.order_number + '&payment_id=' + data.transID;
+        });
+      });
+    }
+  }).render('#paypal-button-container');
+</script>
+{% endblock content %}
