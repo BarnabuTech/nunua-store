@@ -3,6 +3,7 @@
 # # Create your views here.
 
 from django.shortcuts import render
+from django.conf import settings
 
 from products.models import Product
 
@@ -11,6 +12,8 @@ def home(request):
     
     for product in products:
         product.averageReview = product.average_review()
+    
+    print("TEMPLATE DIRS:", settings.TEMPLATES[0]['DIRS'])
     
     context = {
         'products': products,
