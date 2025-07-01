@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block title %}
 Payment
@@ -60,10 +61,10 @@ Payment
             <div class="mt-4">
               <h4 class="mb-1 text-lg font-bold text-gray-500">
                 <strike
-                  class="font-medium">${{cart_item.total_discount}}</strike>
+                  class="font-medium">Ksh {{ cart_item.total_discount|floatformat:2|intcomma }}</strike>
               </h4>
               <h4 class="text-lg font-bold text-gray-800">
-                ${{cart_item.sub_total}} </h4>
+                Ksh {{ cart_item.sub_total|floatformat:2|intcomma }} </h4>
             </div>
           </div>
         </div>
@@ -80,19 +81,56 @@ Payment
 
       <ul class="mt-4 divide-y text-gray-800">
         <li class="flex flex-wrap gap-4 py-3 text-sm">
-          Subtotal <span class="ml-auto font-bold">${{total}} </span>
+          Subtotal <span class="ml-auto font-bold">Ksh {{ total|floatformat:2|intcomma }} </span>
         </li>
         <li class="flex flex-wrap gap-4 py-3 text-sm">
-          Shipping <span class="ml-auto font-bold">${{shipping_fee}}</span>
+          Shipping <span class="ml-auto font-bold">Ksh {{ shipping_fee|floatformat:2|intcomma }}</span>
         </li>
         <li class="flex flex-wrap gap-4 py-3 text-sm">
-          Tax <span class="ml-auto font-bold">${{tax}} </span>
+          Tax <span class="ml-auto font-bold">Ksh {{ tax|floatformat:2|intcomma }} </span>
         </li>
         <li class="flex flex-wrap gap-4 py-3 text-sm font-bold">
-          Total <span class="ml-auto">${{grand_total}}</span>
+          Total <span class="ml-auto">Ksh {{ grand_total|floatformat:2|intcomma }}</span>
         </li>
       </ul>
-      <div id="paypal-button-container"></div>
+
+      <!-- Payment Methods -->
+      <div class="mt-6">
+        <h4 class="mb-4 text-lg font-semibold">Select Payment Method</h4>
+        
+        <!-- Payment Method Tabs -->
+        <div class="mb-6">
+          <div class="flex border-b">
+            <button onclick="selectPaymentMethod('paypal')" id="paypal-tab" class="px-4 py-2 border-b-2 border-transparent hover:border-gray-300">
+              <img src="/static/images/pay/paypal.webp" alt="PayPal" class="h-8">
+            </button>
+            <button onclick="selectPaymentMethod('mpesa')" id="mpesa-tab" class="px-4 py-2 border-b-2 border-transparent hover:border-gray-300">
+              <img src="/static/images/pay/m-pesa.png" alt="M-Pesa" class="h-8">
+            </button>
+          </div>
+        </div>
+
+        <!-- PayPal Button Container -->
+        <div id="paypal-container" class="payment-method-container">
+          <div id="paypal-button-container"></div>
+        </div>
+
+        <!-- M-Pesa Form Container -->
+        <div id="mpesa-container" class="payment-method-container hidden">
+          <form id="mpesa-form" class="space-y-4">
+            <div>
+              <label for="phone" class="block text-sm font-medium text-gray-700">M-Pesa Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="e.g., 254712345678" 
+                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                     pattern="^(?:254|\+254|0)?(7\d{8})$" required>
+              <p class="mt-1 text-xs text-gray-500">Format: 254XXXXXXXXX</p>
+            </div>
+            <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+              Pay with M-Pesa
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
     {% else %}
     <div class="flex items-center justify-center h-96">
@@ -103,9 +141,10 @@ Payment
 </div>
 
 <!-- Include the PayPal JavaScript SDK -->
-<script
-  src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD"></script>
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD"></script>
+
 <script>
+  // Common functions
   function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
@@ -124,10 +163,27 @@ Payment
   var total = '{{grand_total}}';
   var url = '{% url "payments" %}';
   var csrftoken = getCookie("csrftoken");
-  var orderID = '{{order.order_number}}'
-  var payment_method = 'PayPal'
-  var redirect_url = '{% url "order_success" %}'
+  var orderID = '{{order.order_number}}';
+  var redirect_url = '{% url "order_success" %}';
 
+  // Payment method selection
+  function selectPaymentMethod(method) {
+    // Hide all containers
+    document.querySelectorAll('.payment-method-container').forEach(container => {
+      container.classList.add('hidden');
+    });
+    
+    // Show selected container
+    document.getElementById(`${method}-container`).classList.remove('hidden');
+    
+    // Update tab styling
+    document.querySelectorAll('[id$="-tab"]').forEach(tab => {
+      tab.classList.remove('border-indigo-500');
+    });
+    document.getElementById(`${method}-tab`).classList.add('border-indigo-500');
+  }
+
+  // Initialize PayPal
   paypal.Buttons({
     style: {
       color: 'gold',
@@ -154,7 +210,7 @@ Payment
           body: JSON.stringify({
             orderID: orderID,
             transID: details.id,
-            payment_method: payment_method,
+            payment_method: 'PayPal',
             status: details.status,
           }),
         })
@@ -165,5 +221,83 @@ Payment
       });
     }
   }).render('#paypal-button-container');
+
+  // M-Pesa Payment Handling
+  document.getElementById('mpesa-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const phoneNumber = document.getElementById('phone').value;
+    const mpesaButton = e.target.querySelector('button[type="submit"]');
+    
+    // Disable button and show loading state
+    mpesaButton.disabled = true;
+    mpesaButton.innerHTML = 'Processing...';
+    
+    // Initiate M-Pesa payment
+    fetch('{% url "initiate_mpesa" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      },
+      body: JSON.stringify({
+        orderID: orderID,
+        phoneNumber: phoneNumber,
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        // Show message to check phone
+        mpesaButton.innerHTML = 'Check your phone for the STK push';
+        
+        // Start polling for payment status
+        checkPaymentStatus(data.checkoutRequestID);
+      } else {
+        throw new Error(data.message);
+      }
+    })
+    .catch(error => {
+      mpesaButton.disabled = false;
+      mpesaButton.innerHTML = 'Pay with M-Pesa';
+      alert('Payment failed: ' + error.message);
+    });
+  });
+
+  function checkPaymentStatus(checkoutRequestID) {
+    const pollInterval = setInterval(() => {
+      fetch('{% url "verify_mpesa" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({
+          checkoutRequestID: checkoutRequestID
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.ResultCode === 0) {
+          clearInterval(pollInterval);
+          window.location.href = redirect_url + '?order_number=' + orderID + '&payment_id=' + checkoutRequestID;
+        } else if (data.ResultCode === 1032) {
+          // Transaction cancelled by user
+          clearInterval(pollInterval);
+          throw new Error('Payment cancelled by user');
+        }
+      })
+      .catch(error => {
+        clearInterval(pollInterval);
+        const mpesaButton = document.querySelector('#mpesa-form button[type="submit"]');
+        mpesaButton.disabled = false;
+        mpesaButton.innerHTML = 'Pay with M-Pesa';
+        alert('Payment failed: ' + error.message);
+      });
+    }, 5000); // Poll every 5 seconds
+  }
+
+  // Show PayPal by default
+  selectPaymentMethod('paypal');
 </script>
 {% endblock content %}

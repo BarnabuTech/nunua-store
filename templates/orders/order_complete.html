@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% load static %} 
+{% extends 'base.html' %} {% load static %} {% load humanize %} 
 {% block title %} Pyament Successful
 {% endblock title %} {% block content %}
 
@@ -73,7 +73,7 @@
           <tr class="flex">
             <td class="flex-1 py-1">{{item.product.product_name}}</td>
             <td class="min-w-[44px]">{{item.quantity}}</td>
-            <td class="min-w-[44px]">${{item.product_price}}</td>
+            <td class="min-w-[44px]">Ksh {{ item.product_price|floatformat:2|intcomma }}</td>
           </tr>
           {% endfor %}
         </tbody>
