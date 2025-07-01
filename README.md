@@ -1,6 +1,8 @@
-# Nunua Store
+# Nunua Store | Online Shopping Platform
 
-Welcome to Nunua Store, your go-to online marketplace built with the power of Django!
+![Nunua Store Logo](nunua/static/images/logo/Logo.png)
+
+Welcome to Nunua Store, your go-to online shopping platform built with the power of Django Framework.
 
 ## Overview
 
@@ -14,7 +16,8 @@ Nunua Store is a fully functional e-commerce platform designed to provide a seam
 * **Detailed Product Pages:** View comprehensive information about each product, including descriptions, images, pricing, and availability.
 * **User Authentication:** Secure user registration and login to manage profiles and order history.
 * **Shopping Cart:** Add, remove, and modify items in a persistent shopping cart.
-* **Checkout Process:** A streamlined and secure checkout process with options for shipping and payment.
+* **Checkout Process:** A streamlined and secure checkout process with options for shipping and payment e.g. PayPal, Mpesa, and Stripe.
+* **Order Tracking:** Receive real-time updates on the status of your order.
 * **Order History:** Track past orders and view order details.
 * **Search Functionality:** Quickly find products using keywords.
 
@@ -33,7 +36,7 @@ Nunua Store is a fully functional e-commerce platform designed to provide a seam
 * **Templates:** (Containing: HTML, the standard markup language for creating web pages, and JavaScript, a programming language used for adding interactivity to web pages).
 * **TailwindCSS v.4.1:** Used for styling the look and feel of the entire website.
 * **Database:** (for now is SQLite3, but could be switched to PostgreSQL) for storing application data.
-* **Payment Gateway Integration:** (To be intergarated with a payment gateway like e.g., Stripe, PayPal and Mpesa).
+* **Payment Gateway Integration:** (Integrated with a payment gateway like e.g. PayPal, Mpesa, and Stripe).
 
 ## Getting Started
 
@@ -42,8 +45,8 @@ To run Nunua Store locally, follow these steps:
 1. **Clone the repository:**
 
     ```bash
-    git clone <repository_url>
-    cd nunua_store
+    git clone
+    cd nunua-store
     ```
 
 2. **Create a virtual environment:**
@@ -105,4 +108,4 @@ Contributions to Nunua Store are welcome! If you'd like to contribute, please fo
 4. Push your changes to your fork.
 5. Submit a pull request.
 
-Thank you for checking out Nunua Store! Happy coding!
+Thank you for checking out Nunua Store!
