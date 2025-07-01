@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from cloudinary.models import CloudinaryField
+from django.conf import settings
 
 from .validators import validate_image_size
 
@@ -50,7 +51,7 @@ class Product(models.Model):
     discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPE_CHOICES, blank=True, null=True)
     discount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
-    image = CloudinaryField('image', validators=[validate_image_size])
+    image = CloudinaryField('image')
     stock = models.PositiveBigIntegerField()
     available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -190,3 +191,17 @@ class ReviewRating(models.Model):
 
     def __str__(self):
         return f'Review by {self.user.username} on {self.product.product_name}'
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='wishlist')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='wishlisted_by')
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+        verbose_name = 'Wishlist'
+        verbose_name_plural = 'Wishlists'
+
+    def __str__(self):
+        return f"{self.user} - {self.product}"

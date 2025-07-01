@@ -8,11 +8,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db.models import Q
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 from .forms import ReviewForm
 from carts.views import _get_cart_id
 from carts.models import CartItem
-from .models import Product, ProductGallery, Category, ReviewRating, VariationCategory, Variation
+from .models import Product, ProductGallery, Category, ReviewRating, VariationCategory, Variation, Wishlist
 
 from django.conf import settings
 
@@ -164,3 +166,23 @@ def search(request):
     }
     
     return render(request, 'products/products.html', context)
+
+@login_required
+@require_POST
+def add_to_wishlist(request):
+    product_id = request.POST.get('product_id')
+    product = Product.objects.get(id=product_id)
+    Wishlist.objects.get_or_create(user=request.user, product=product)
+    return JsonResponse({'status': 'added'})
+
+@login_required
+@require_POST
+def remove_from_wishlist(request):
+    product_id = request.POST.get('product_id')
+    Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
+    return JsonResponse({'status': 'removed'})
+
+@login_required
+def wishlist(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user).select_related('product')
+    return render(request, 'products/wishlist.html', {'wishlist_items': wishlist_items})

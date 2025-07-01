@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 
 import admin_thumbnails
-from .models import Category, Product, ProductGallery, Variation, VariationCategory, ReviewRating
+from .models import Category, Product, ProductGallery, Variation, VariationCategory, ReviewRating, Wishlist
 
 class VariationInline(admin.TabularInline):
     model = Variation
@@ -112,3 +112,9 @@ class ReviewRatingAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related('product', 'user')
+
+@admin.register(Wishlist)
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ('user', 'product', 'added_at')
+    search_fields = ('user__username', 'product__product_name')
+    list_filter = ('added_at',)
