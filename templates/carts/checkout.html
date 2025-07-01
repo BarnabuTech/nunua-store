@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 {% block title %}
   checkout
 {% endblock title %}
@@ -141,7 +142,7 @@
               type="submit"
               class="min-w-[150px] rounded-lg bg-gray-800 px-6 py-3.5 text-sm text-white hover:bg-gray-700"
             >
-              Place Order of ${{grand_total}}
+              Place Order of Ksh {{ grand_total|floatformat:2|intcomma }}
             </button>
             
             
@@ -185,7 +186,7 @@
                       Quantity <span class="ml-auto">{{cart_item.quantity}}</span>
                     </li>
                     <li class="flex flex-wrap gap-4">
-                      Total Price <span class="ml-auto">${{cart_item.sub_total}}</span>
+                      Total Price <span class="ml-auto">Ksh {{ cart_item.sub_total|floatformat:2|intcomma }}</span>
                     </li>
                   </ul>
                 </div>
@@ -197,7 +198,7 @@
 
           <div class="w-full bg-gray-200 p-4 lg:absolute lg:bottom-0 lg:left-0">
             <h4 class="flex flex-wrap gap-4 text-base font-bold text-gray-800">
-              Total <span class="ml-auto">${{grand_total}}</span> <p class="text-xs">Tax and shipping inclusive</p>
+              Total <span class="ml-auto">Ksh {{ grand_total|floatformat:2|intcomma }}</span> <p class="text-xs">Tax and shipping inclusive</p>
             </h4>
           </div>
         </div>
