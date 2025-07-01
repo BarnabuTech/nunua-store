@@ -2,127 +2,40 @@
 {% load allauth i18n %}
 {% load socialaccount %}
 {% load static %}
-{% block title %}
-  SignUp
-{% endblock title %}
-  
+{% block title %}Sign Up{% endblock title %}
 {% block content %}
-<div class="flex flex-wrap">
-  <div class="flex w-full flex-col md:w-1/2">
-   
-    <div
-      class="mx-auto my-auto flex flex-col justify-center pt-8 md:justify-start md:px-6 md:pt-0 lg:w-[28rem]"
-    >
-      <p class="text-left text-3xl font-bold">Hello,</p>
-      <p class="mt-2 text-left text-gray-500">
-        Welcome back, please enter your details.
-      </p>
-      {% if SOCIALACCOUNT_ENABLED %}
-      <a href="{% provider_login_url 'google' %}">
-        <button
-        class="-2 mt-8 flex w-full items-center justify-center rounded-md border px-4 py-1 outline-none ring-gray-400 ring-offset-2 transition hover:border-transparent hover:bg-black hover:text-white focus:ring-2"
-      >
-        <img
-          class="mr-2 h-5"
-          src="https://static.cdnlogo.com/logos/g/35/google-icon.svg"
-          alt
-        />
+<div class="flex min-h-[80vh] items-center justify-center bg-gray-50">
+  <div class="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden flex flex-col justify-center p-8">
+    <div class="flex flex-col items-center mb-6">
+      <img src="{% static 'images/logo/Logo.png' %}" alt="Nunua Logo" class="w-32 mb-2" />
+      <h2 class="text-3xl font-bold text-gray-900">Create Your Account</h2>
+      <p class="text-gray-500 mt-1 mb-4 text-center">Sign up to start shopping with Nunua Store</p>
+    </div>
+    {% if SOCIALACCOUNT_ENABLED %}
+    <a href="{% provider_login_url 'google' %}" class="w-full mb-4">
+      <button class="w-full flex items-center justify-center rounded-md border px-4 py-2 bg-white text-gray-700 shadow hover:bg-gray-100 transition">
+        <img class="mr-2 h-5" src="https://static.cdnlogo.com/logos/g/35/google-icon.svg" alt="Google" />
         Sign Up with Google
       </button>
-      </a>
-      {% endif %}
-      
-      <div class="relative mt-8 flex h-px place-items-center bg-gray-200">
-        <div
-          class="absolute left-1/2 h-6 w-14 -translate-x-1/2 bg-white text-center text-sm text-gray-500"
-        >
-          or
-        </div>
-      </div>
-
-     
-  <form class="flex flex-col pt-3 md:pt-8" method="post" action="{% url 'account_signup' %}">
-    {% csrf_token %}
-    {{ redirect_field }} <!-- To display non-field specific errors -->
-    
-    <div class="flex flex-col pt-4">
-      <div class="relative flex overflow-hidden border-b-2 transition focus-within:border-b-gray-500">
-        
-        <input
-              type="email"
-              id="email"
-              name="email"
-              class="w-full flex-1 appearance-none border-gray-300 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
-              placeholder="Email"
-              required
-            />
-            <p class="text-sm text-red-500">{{ form.email.errors }}</p>
-             <!-- Display errors for email --> <!-- Render the email input field -->
-      </div>
+    </a>
+    {% endif %}
+    <div class="relative flex h-px items-center bg-gray-200 my-4">
+      <span class="absolute left-1/2 -translate-x-1/2 bg-white px-2 text-sm text-gray-400">or</span>
     </div>
-    
-    <div class="flex flex-col pt-4">
-      <div class="relative flex overflow-hidden border-b-2 transition focus-within:border-b-gray-500">
-        
-        <input
-              type="password"
-              id="pasword1"
-              name="password1"
-              class="w-full flex-1 appearance-none border-gray-300 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
-              placeholder="Password"
-              required
-            />
-            <p class="text-sm text-red-500">{{ form.password1.errors }}</p>
-             <!-- Display errors for password1 --> <!-- Render the password1 input field -->
-      </div>
+    <form class="flex flex-col gap-4" method="post" action="{% url 'account_signup' %}">
+      {% csrf_token %}
+      {{ redirect_field }}
+      <input type="email" id="email" name="email" class="w-full rounded border border-gray-300 px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Email" required />
+      <p class="text-sm text-red-500">{{ form.email.errors }}</p>
+      <input type="password" id="password1" name="password1" class="w-full rounded border border-gray-300 px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Password" required />
+      <p class="text-sm text-red-500">{{ form.password1.errors }}</p>
+      <input type="password" id="password2" name="password2" class="w-full rounded border border-gray-300 px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Confirm Password" required />
+      <p class="text-sm text-red-500">{{ form.password2.errors }}</p>
+      <button type="submit" class="w-full rounded-lg bg-indigo-600 px-4 py-2 text-center text-base font-semibold text-white shadow-md hover:bg-indigo-700 transition">Create Account</button>
+    </form>
+    <div class="py-6 text-center">
+      <p class="text-gray-600">Already have an account? <a href="{% url 'account_login' %}" class="font-semibold text-indigo-600 underline underline-offset-4">Log in.</a></p>
     </div>
-    
-    <div class="mb-12 flex flex-col pt-4">
-      <div class="relative flex overflow-hidden border-b-2 transition focus-within:border-b-gray-500">
-        
-        <input
-              type="password"
-              id="pasword2"
-              name="password2"
-              class="w-full flex-1 appearance-none border-gray-300 bg-white px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
-              placeholder="Password"
-              required
-            />
-            <p class="text-sm text-red-500">{{ form.password2.errors }}</p>
-             <!-- Display errors for password2 --> <!-- Render the password2 input field -->
-      </div>
-    </div>
-    
-    <button type="submit" class="w-full rounded-lg bg-gray-900 px-4 py-2 text-center text-base font-semibold text-white shadow-md ring-gray-500 ring-offset-2 transition focus:ring-2">
-      Create Account
-    </button>
-  </form>
-  
-
-      <div class="py-12 text-center">
-        <p class="whitespace-nowrap text-gray-600">
-          Already have an account?
-          <a
-            href="{{ login_url }}"
-            class="font-semibold text-gray-900 underline underline-offset-4"
-            >login.</a
-          >
-        </p>
-      </div>
-    </div>
-  </div>
-  <div
-    class="pointer-events-none relative hidden h-screen select-none bg-black md:block md:w-1/2"
-  >
-    <div
-      class="absolute top-0 h-full w-full bg-black bg-opacity-50"
-    ></div>
-    <img
-      class="-z-1 absolute top-0 h-full w-full object-cover opacity-90"
-      src="{% static 'images/account/login.jpg' %}"
-      alt=""
-    />
   </div>
 </div>
-
 {% endblock %}

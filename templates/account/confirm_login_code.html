@@ -4,68 +4,27 @@
 {% load static %} 
 {% block title %} Sign In {% endblock title %} 
 {% block content %}
-
-<!-- component -->
-<div class="flex h-screen items-center justify-center bg-gray-100">
-  <div class="w-full max-w-sm rounded-lg bg-white p-8 shadow-lg">
-    <div class="mb-6 flex items-center space-x-2">
-        <svg
-            class="w-8 h-8 text-blue-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            >
-      <h1 class="text-xl font-semibold">Enter Sign-In Code</h1>
+<div class="flex min-h-[80vh] items-center justify-center bg-gray-50 py-12">
+  <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+    <div class="flex flex-col items-center mb-6">
+      <img src="{% static 'images/logo/Logo.png' %}" alt="Nunua Logo" class="w-32 mb-4" />
+      <h2 class="text-2xl font-bold text-gray-900">Enter Sign-In Code</h2>
+      <p class="text-gray-500 mt-1 text-center">We've sent a code to <a href="mailto:{{ email }}" class="text-indigo-600">{{ email }}</a>. The code expires shortly, so please enter it soon.</p>
     </div>
-    <p class="mb-6 text-sm text-gray-600">
-      We’ve sent a code to <a href="mailto:{{ email }}">{{ email }}</a>. The code expires shortly, so please enter it soon.
-    </p>
-    <form method="post" action="{% url 'account_confirm_login_code' %}" id="confirmCodeForm" class="space-y-6">
-        {% csrf_token %}
-        {{ redirect_field }}
-      <div>
-        <label
-          for="code"
-          class="mb-2 block text-sm font-medium text-gray-700"
-          >Code *</label
-        >
-        <input
-          type="text"
-          id="code"
-          name="code"
-          class="email-input form-input block w-full rounded-md border border-gray-300 shadow-sm"
-          required
-        />
-      </div>
-
-      <div class="flex justify-between">
-        <button
-          type="submit"
-          class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:border-blue-300 focus:outline-none focus:ring"
-        >
-          Confirm
-        </button>
-      </div>
+    <form method="post" action="{% url 'account_confirm_login_code' %}" class="flex flex-col gap-4">
+      {% csrf_token %}
+      {{ redirect_field }}
+      <input type="text" id="code" name="code" class="w-full rounded border border-gray-300 px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Enter Code" required />
+      <button type="submit" class="w-full rounded-lg bg-indigo-600 px-4 py-2 text-center text-base font-semibold text-white shadow-md hover:bg-indigo-700 transition">Confirm</button>
     </form>
-    <div class="relative mt-8 flex h-px place-items-center bg-gray-200">
-        <div
-          class="absolute left-1/2 h-6 w-14 -translate-x-1/2 bg-white text-center text-sm text-gray-500"
-        >
-          or
-        </div>
-      </div>
-    <a href="{{login_url}}" class="google-bg">
-        <button
-          class="-2 mt-8 flex items-center justify-center rounded-md border px-4 py-1 outline-none ring-gray-400 ring-offset-2 transition hover:border-transparent hover:bg-black hover:text-white focus:ring-2"
-        >
-          
-          Other sign-in options
-        </button>
-      </a>
+    <div class="relative flex h-px items-center bg-gray-200 my-6">
+      <span class="absolute left-1/2 -translate-x-1/2 bg-white px-2 text-sm text-gray-400">or</span>
+    </div>
+    <a href="{% url 'account_login' %}" class="w-full">
+      <button class="w-full flex items-center justify-center rounded-md border px-4 py-2 bg-white text-gray-700 shadow hover:bg-gray-100 transition">
+        Other sign-in options
+      </button>
+    </a>
   </div>
-  
-
-
 </div>
 {% endblock content %}
