@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
 
 {% block title %}Products{% endblock title %}
 
@@ -49,10 +51,10 @@
           </h3>
           <div class="mt-2 flex items-center justify-between">
             <p class="text-base font-semibold text-gray-900">
-              ${{product.price}}
+              Ksh {{ product.price|floatformat:2|intcomma }}
             </p>
             {% if product.discount %}
-            <p class="text-sm text-gray-500 line-through">${{product.discount}}</p>
+            <p class="text-sm text-gray-500 line-through">Ksh {{ product.discount|floatformat:2|intcomma }}</p>
             {% endif %}
           </div>
         </div>

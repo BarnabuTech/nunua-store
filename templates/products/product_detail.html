@@ -2,6 +2,7 @@
 
 {% block title %}{{product.product_name}}{% endblock title %}
 {% load static %}
+{% load humanize %}
 {% block content %}
 
 <div class="bg-gray-50 font-sans">
@@ -62,9 +63,9 @@
           <!-- Price -->
           <div class="mt-6">
             <div class="flex items-baseline gap-4">
-              <p class="text-4xl font-bold text-gray-900">${{product.price}}</p>
+              <p class="text-4xl font-bold text-gray-900">Ksh {{ product.price|floatformat:2|intcomma }}</p>
               {% if product.discount %}
-              <p class="text-lg text-gray-400 line-through">${{product.discount}}</p>
+              <p class="text-lg text-gray-400 line-through">Ksh {{ product.discount|floatformat:2|intcomma }}</p>
               {% endif %}
             </div>
             <p class="mt-1 text-sm text-gray-500">Tax included</p>
