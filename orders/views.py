@@ -11,8 +11,11 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from .models import Order, Payment, OrderProduct
+from .mpesa import MpesaClient
 import json
 from products.models import Product
 from django.core.mail import EmailMessage
@@ -166,3 +169,116 @@ def order_complete(request):
         return render(request, 'orders/order_complete.html', context)
     except (Payment.DoesNotExist, Order.DoesNotExist):
         return redirect('home')
+
+@require_POST
+def initiate_mpesa_payment(request):
+    try:
+        data = json.loads(request.body)
+        order = Order.objects.get(
+            user=request.user, 
+            is_ordered=False, 
+            order_number=data['orderID']
+        )
+        
+        mpesa_client = MpesaClient()
+        response = mpesa_client.initiate_stk_push(
+            phone_number=data['phoneNumber'],
+            amount=order.order_total,
+            order_ref=order.order_number
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'STK push initiated',
+            'checkoutRequestID': response['CheckoutRequestID']
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+
+@csrf_exempt
+def mpesa_callback(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            order_ref = request.GET.get('order_ref')
+            
+            if data['Body']['stkCallback']['ResultCode'] == 0:
+                # Payment successful
+                order = Order.objects.get(order_number=order_ref, is_ordered=False)
+                
+                # Create payment record
+                payment = Payment.objects.create(
+                    user=order.user,
+                    payment_id=data['Body']['stkCallback']['CheckoutRequestID'],
+                    payment_method='M-Pesa',
+                    amount_paid=order.order_total,
+                    status='COMPLETED'
+                )
+                
+                # Update order
+                order.payment = payment
+                order.is_ordered = True
+                order.save()
+                
+                # Move cart items to order products
+                cart_items = CartItem.objects.filter(user=order.user)
+                for item in cart_items:
+                    OrderProduct.objects.create(
+                        order=order,
+                        payment=payment,
+                        user=order.user,
+                        product=item.product,
+                        quantity=item.quantity,
+                        product_price=item.product.price,
+                        ordered=True
+                    )
+                    
+                    # Reduce product stock
+                    product = item.product
+                    product.stock -= item.quantity
+                    product.save()
+                
+                # Clear cart
+                cart_items.delete()
+                
+                # Send email
+                mail_subject = 'Thank you for your order!'
+                message = render_to_string('orders/order_recieved_email.html', {
+                    'user': order.user,
+                    'order': order,
+                })
+                to_email = order.user.email
+                send_email = EmailMessage(mail_subject, message, to=[to_email])
+                send_email.send()
+                
+                return JsonResponse({'status': 'success'})
+            else:
+                # Payment failed
+                return JsonResponse({
+                    'status': 'error',
+                    'message': data['Body']['stkCallback']['ResultDesc']
+                })
+                
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=400)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+def verify_mpesa_payment(request):
+    try:
+        data = json.loads(request.body)
+        mpesa_client = MpesaClient()
+        response = mpesa_client.verify_transaction(data['checkoutRequestID'])
+        
+        return JsonResponse(response)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
