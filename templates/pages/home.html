@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 {% block title %}Home{% endblock %}
 {% block content %}
 <style>
@@ -17,10 +18,9 @@
       {% for product in products %}
       <div class="relative group bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out overflow-hidden">
         <!-- Wishlist Button -->
-        <button title="Add to Wishlist" class="absolute top-3 right-3 z-10 p-2 bg-white/90 backdrop-blur rounded-full shadow-md hover:bg-red-100 transition-colors">
-          <svg class="w-6 h-6 text-gray-500 hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        <button title="Add to Wishlist" class="absolute top-3 right-3 z-10 p-2 bg-white/90 backdrop-blur rounded-full shadow-md hover:bg-red-100 transition-colors wishlist-btn" data-product-id="{{product.id}}" {% if product.id in wishlisted_ids %}data-wishlisted="true"{% else %}data-wishlisted="false"{% endif %}>
+          <svg class="w-6 h-6 heart-icon {% if product.id in wishlisted_ids %}text-red-600{% else %}text-gray-500{% endif %}" {% if product.id in wishlisted_ids %}fill="currentColor"{% else %}fill="none"{% endif %} stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
           </svg>
         </button>
 
@@ -35,7 +35,7 @@
           <h3 class="font-semibold text-gray-900 truncate mb-1">{{product.product_name}}</h3>
           
           <div class="flex items-center justify-between mb-2">
-            <span class="text-lg font-bold text-indigo-600">${{product.price}}</span>
+            <span class="text-lg font-bold text-indigo-600">Ksh {{ product.price|floatformat:2|intcomma }}</span>
             <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
               {{product.stock|default:0}} left
             </span>
@@ -75,4 +75,39 @@
   </div>
 </div>
 
+<script>
+document.querySelectorAll('.wishlist-btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const productId = this.getAttribute('data-product-id');
+    const isWishlisted = this.getAttribute('data-wishlisted') === 'true';
+    const userIsAuthenticated = {{ request.user.is_authenticated|yesno:'true,false' }};
+    if (!userIsAuthenticated) {
+      window.location.href = '{% url "account_login" %}?next=' + window.location.pathname;
+      return;
+    }
+    const url = isWishlisted ? '{% url "remove_from_wishlist" %}' : '{% url "add_to_wishlist" %}';
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `product_id=${productId}`
+    }).then(res => res.json()).then(data => {
+      if (data.status === 'added') {
+        this.setAttribute('data-wishlisted', 'true');
+        this.querySelector('.heart-icon').classList.remove('text-gray-500');
+        this.querySelector('.heart-icon').classList.add('text-red-600');
+        this.querySelector('.heart-icon').setAttribute('fill', 'currentColor');
+      } else if (data.status === 'removed') {
+        this.setAttribute('data-wishlisted', 'false');
+        this.querySelector('.heart-icon').classList.remove('text-red-600');
+        this.querySelector('.heart-icon').classList.add('text-gray-500');
+        this.querySelector('.heart-icon').setAttribute('fill', 'none');
+      }
+    });
+  });
+});
+</script>
 {% endblock %}
