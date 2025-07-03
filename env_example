@@ -10,9 +10,9 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 # Your email settings
 EMAIL_HOST=smtp.gmail.com
-EMAIL_HOST_USER=your_email_host
-EMAIL_HOST_PASSWORD=your_host_password
-DEFAULT_FROM_EMAIL=your_default_email
+EMAIL_HOST_USER=vinlawz07@gmail.com
+EMAIL_HOST_PASSWORD=your_app_password  # Use an app password if 2FA is enabled
+DEFAULT_FROM_EMAIL=vinlawz07@gmail.com
 
 # Database details
 DATABASE_NAME=database_name

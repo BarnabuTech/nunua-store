@@ -16,7 +16,7 @@ import cloudinary
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 
@@ -35,6 +35,7 @@ SECRET_KEY = config('SECRET_KEY')
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -54,6 +55,8 @@ INSTALLED_APPS = [
     'products.apps.ProductsConfig',
     'orders.apps.OrdersConfig',   
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
