@@ -3,9 +3,11 @@
 {% load allauth account %} 
 {% load socialaccount %} 
 {% load static %} 
-{% block title %} Sign In {% endblock title %} {% block content %}
+{% block title %} Sign In {% endblock title %}
+
+{% block content %}
 <div class="flex min-h-[80vh] items-center justify-center bg-gray-50">
-  <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+  <div class="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden flex flex-col justify-center p-8">
     <div class="flex flex-col items-center mb-6">
       <img src="{% static 'images/logo/Logo.png' %}" alt="Nunua Logo" class="w-32 mb-2" />
       <h2 class="text-3xl font-bold text-gray-900">Welcome Back</h2>
@@ -37,17 +39,12 @@
     </div>
     <form class="flex flex-col gap-4" method="post" action="{% url 'account_login' %}">
       {% csrf_token %}
-      {% if form.errors %}
-      <div class="text-red-500 text-sm mb-2">
-        <ul>
-          {% for field in form %}{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}{% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
-        </ul>
-      </div>
-      {% endif %}
+      {{ redirect_field }}
       <input type="email" id="email" name="login" class="w-full rounded border border-gray-300 px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Email" required />
+      <p class="text-sm text-red-500">{{ form.login.errors }}</p>
       <input type="password" id="password" name="password" class="w-full rounded border border-gray-300 px-4 py-2 text-base text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Password" required />
+      <p class="text-sm text-red-500">{{ form.password.errors }}</p>
       <button type="submit" class="w-full rounded-lg bg-indigo-600 px-4 py-2 text-center text-base font-semibold text-white shadow-md hover:bg-indigo-700 transition">Log in</button>
-    </form>
     <div class="py-6 text-center">
       <p class="text-gray-600">If you have not created an account yet, please <a class="font-semibold text-indigo-600 underline underline-offset-4" href="{% url 'account_signup' %}">Sign up for free.</a></p>
     </div>
