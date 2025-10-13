@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "nunua/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "includeFiles": [
+          "**/*"
+        ]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "nunua/wsgi.py"
+    }
+  ],
+  "env": {
+    "PYTHON_VERSION": "3.11",
+    "PIP_VERSION": "23.0"
+  },
+  "functions": {
+    "nunua/wsgi.py": {
+      "runtime": "@vercel/python"
+    }
+  },
+  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput",
+  "devCommand": "python manage.py runserver 0.0.0.0:$PORT",
+  "installCommand": "pip install -r requirements.txt && npm install"
+}
