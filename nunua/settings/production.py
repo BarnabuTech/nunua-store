@@ -1,18 +1,20 @@
 from .base import *
+import os
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+# Get allowed hosts from environment variable or use wildcard for Vercel
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '.vercel.app,localhost,127.0.0.1').split(',')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'NAME': os.getenv('DATABASE_NAME', ''),
+        'USER': os.getenv('DATABASE_USER', ''),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
+        'HOST': os.getenv('DATABASE_HOST', ''),
+        'PORT': os.getenv('DATABASE_PORT', ''),
         'CONN_MAX_AGE': 600,
         'CONN_HEALTH_CHECK': True,
         'OPTIONS': {
@@ -33,5 +35,6 @@ CSRF_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_HSTS_PRELOAD = True
 
-DOMAIN = ''
-CSRF_TRUSTED_ORIGINS = []
+# Get domain from environment variable
+DOMAIN = os.getenv('DOMAIN', '')
+CSRF_TRUSTED_ORIGINS = [f'https://{DOMAIN}', f'https://www.{DOMAIN}'] if DOMAIN else []
