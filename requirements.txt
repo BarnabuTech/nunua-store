@@ -12,6 +12,7 @@ django-mpesa==2.0.14
 django-redis==5.4.0
 django-unfold==0.56.0
 djangorestframework==3.16.0
+gunicorn==21.2.0
 idna==3.10
 jsonfield==3.1.0
 pillow==11.2.1
