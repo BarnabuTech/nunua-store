@@ -20,6 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Validate critical environment variables
 REQUIRED_ENV_VARS = ['SECRET_KEY']
+OPTIONAL_BUT_RECOMMENDED = ['DATABASE_NAME', 'DATABASE_USER', 'DATABASE_PASSWORD', 'DATABASE_HOST']
 for var in REQUIRED_ENV_VARS:
     if not config(var):
         raise ValueError(f"Required environment variable {var} is not set")
