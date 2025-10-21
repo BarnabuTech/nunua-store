@@ -5,7 +5,7 @@ import os
 DEBUG = False
 
 # Get allowed hosts from environment variable or use wildcard for Vercel
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '.vercel.app,localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'nunua-store-website.vercel.app').split(',')
 
 DATABASES = {
     'default': {
