@@ -23,3 +23,16 @@ DATABASE_PORT=database_port
 
 # PayPal Payment Settings
 PAYPAL_CLIENT_ID=your_paypal_client_id
+
+# M-Pesa / Daraja credentials
+# Replace the values below with your Daraja sandbox/production credentials
+MPESA_SHORTCODE=123456
+MPESA_CONSUMER_KEY=your_mpesa_consumer_key
+MPESA_CONSUMER_SECRET=your_mpesa_consumer_secret
+MPESA_PASSKEY=your_mpesa_passkey
+MPESA_CALLBACK_URL=https://yourdomain.com/api/mpesa/callback
+# M-Pesa Environment Settings
+# Set to 'sandbox' for testing or 'production' for live payments
+MPESA_ENVIRONMENT=production
+# Optional: Override API URL (if not set, will use sandbox/production based on MPESA_ENVIRONMENT)
+# MPESA_API_URL=https://api.safaricom.co.ke
