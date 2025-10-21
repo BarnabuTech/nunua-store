@@ -11,11 +11,7 @@ class MpesaClient:
         self.consumer_secret = settings.MPESA_CONSUMER_SECRET
         self.passkey = settings.MPESA_PASSKEY
         self.callback_url = settings.MPESA_CALLBACK_URL
-        
-        if settings.DEBUG:
-            self.api_url = "https://sandbox.safaricom.co.ke"
-        else:
-            self.api_url = "https://api.safaricom.co.ke"
+        self.api_url = settings.MPESA_API_URL
 
     def get_access_token(self):
         """Get access token from Safaricom"""
