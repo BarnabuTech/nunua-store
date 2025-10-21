@@ -18,18 +18,20 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+# Validate critical environment variables
+REQUIRED_ENV_VARS = ['SECRET_KEY']
+for var in REQUIRED_ENV_VARS:
+    if not config(var):
+        raise ValueError(f"Required environment variable {var} is not set")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
 
-# # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
+# ALLOWED_HOSTS - Default to localhost for development, override in production
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
-# ALLOWED_HOSTS = []
+# CSRF_TRUSTED_ORIGINS - Default for development
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://localhost:8000,http://127.0.0.1:8000').split(',')
 
 
 # Application definition
@@ -206,10 +208,10 @@ PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # M-Pesa Settings
-MPESA_SHORTCODE = os.environ.get('MPESA_SHORTCODE', '')
-MPESA_CONSUMER_KEY = os.environ.get('MPESA_CONSUMER_KEY', '')
-MPESA_CONSUMER_SECRET = os.environ.get('MPESA_CONSUMER_SECRET', '')
-MPESA_PASSKEY = os.environ.get('MPESA_PASSKEY', '')
-MPESA_CALLBACK_URL = os.environ.get('MPESA_CALLBACK_URL', 'https://yourdomain.com/api/mpesa/callback')
-MPESA_ENVIRONMENT = os.environ.get('MPESA_ENVIRONMENT', 'production').lower()
-MPESA_API_URL = os.environ.get('MPESA_API_URL', 'https://api.safaricom.co.ke' if MPESA_ENVIRONMENT == 'production' else 'https://sandbox.safaricom.co.ke')
+MPESA_SHORTCODE = config('MPESA_SHORTCODE', default='')
+MPESA_CONSUMER_KEY = config('MPESA_CONSUMER_KEY', default='')
+MPESA_CONSUMER_SECRET = config('MPESA_CONSUMER_SECRET', default='')
+MPESA_PASSKEY = config('MPESA_PASSKEY', default='')
+MPESA_CALLBACK_URL = config('MPESA_CALLBACK_URL', default='https://yourdomain.com/api/mpesa/callback')
+MPESA_ENVIRONMENT = config('MPESA_ENVIRONMENT', default='production').lower()
+MPESA_API_URL = config('MPESA_API_URL', default='https://api.safaricom.co.ke' if MPESA_ENVIRONMENT == 'production' else 'https://sandbox.safaricom.co.ke')

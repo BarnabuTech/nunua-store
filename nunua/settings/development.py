@@ -3,15 +3,13 @@ from .base import *
 # Development-specific settings
 DEBUG = True
 
-# Add 'localhost' to ALLOWED_HOSTS for development
+# Override ALLOWED_HOSTS for development
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-DOMAINS = ['localhost', '127.0.0.1']
-SECURE_SSL_REDIRECT = False
+
+# Override CSRF_TRUSTED_ORIGINS for development
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+# Database for development (SQLite)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -19,4 +17,5 @@ DATABASES = {
     }
 }
 
+# Email backend for development (console output)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
