@@ -15,12 +15,12 @@ EMAIL_HOST_USER=your_email_host
 EMAIL_HOST_PASSWORD=your_host_password
 DEFAULT_FROM_EMAIL=your_default_email
 
-# Database details
-DATABASE_NAME=database_name
-DATABASE_USER=database_user
-DATABASE_PASSWORD=database_password
-DATABASE_HOST=database_host
-DATABASE_PORT=database_port
+# Database details (for Neon PostgreSQL on Vercel)
+DATABASE_NAME=your_neon_db_name
+DATABASE_USER=your_neon_username
+DATABASE_PASSWORD=your_neon_password
+DATABASE_HOST=your_neon_host
+DATABASE_PORT=5432
 
 # PayPal Payment Settings
 PAYPAL_CLIENT_ID=your_paypal_client_id
