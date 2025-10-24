@@ -1,7 +1,7 @@
 from .base import *
 
 # Development-specific settings
-DEBUG = True
+DEBUG = False
 
 # Override ALLOWED_HOSTS for development
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
