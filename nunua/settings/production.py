@@ -4,7 +4,11 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = [
+    '.vercel.app',  
+    'nunua-store-website.vercel.app', 
+    'https://nunua-store-website.vercel.app', 
+]
 
 # Get allowed hosts from environment variable or use wildcard for Vercel
 # ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'nunua-store-website.vercel.app').split(',')
