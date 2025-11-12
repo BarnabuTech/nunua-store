@@ -6,8 +6,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     '.vercel.app',  
-    'nunua-store-website.vercel.app', 
-    'https://nunua-store-website.vercel.app', 
+    'nunua-store-website.vercel.app',  
 ]
 
 # Get allowed hosts from environment variable or use wildcard for Vercel
