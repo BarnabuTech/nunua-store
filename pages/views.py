@@ -1,14 +1,15 @@
-# from django.shortcuts import render
-
-# # Create your views here.
-
 from django.shortcuts import render
 from django.conf import settings
+from products.models import Product, Wishlist, Category
 
-from products.models import Product, Wishlist
+# Create your views here
 
 def home(request):
+    featured_products = Product.objects.filter(available=True)[:6]
+    categories = Category.objects.all()
+    
     products = Product.objects.filter(available=True).order_by('-created')[:20]
+    
     wishlisted_ids = set()
     if request.user.is_authenticated:
         wishlisted_ids = set(Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True))
@@ -21,6 +22,8 @@ def home(request):
     context = {
         'products': products,
         'wishlisted_ids': wishlisted_ids,
+        'featured_products': featured_products,
+        'categories': categories,
     }
     return render(request, 'pages/home.html', context)
 
