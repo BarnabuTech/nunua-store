@@ -16,7 +16,8 @@ gunicorn==21.2.0
 idna==3.10
 jsonfield==3.1.0
 pillow==11.2.1
-psycopg2-binary==2.9.10
+# psycopg2-binary==2.9.10
+psycopg2-binary
 pycparser==2.22
 PyJWT==2.10.1
 python-decouple==3.8
