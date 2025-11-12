@@ -1,13 +1,15 @@
 from .base import *
 
 # Development-specific settings
-DEBUG = False
+DEBUG = True 
 
 # Override ALLOWED_HOSTS for development
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Override CSRF_TRUSTED_ORIGINS for development
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]
+
+SECURE_SSL_REDIRECT = False
 
 # Database for development (SQLite)
 DATABASES = {
