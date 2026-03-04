@@ -17,4 +17,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nunua.settings.production')
 application = get_wsgi_application()
 
 # Required for Vercel — alias 'application' as 'app'
-app = application
+# app = application
