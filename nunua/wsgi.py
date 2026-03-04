@@ -11,7 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nunua.settings')
+# default to production settings; deployment must still set this env var explicitly
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nunua.settings.production')
 
 application = get_wsgi_application()
 

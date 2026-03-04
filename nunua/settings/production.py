@@ -13,10 +13,9 @@ if _env_allowed:
 elif _env_domain:
     ALLOWED_HOSTS = [_env_domain, f'www.{_env_domain}']
 else:
-    ALLOWED_HOSTS = [
-        'nunua-store.onrender.com',
-        'https://www.nunua-store.onrender.com',
-    ]
+    # By default allow the Render hostname if not specified via env vars.
+    # scheme prefixes are not allowed in ALLOWED_HOSTS so we strip them.
+    ALLOWED_HOSTS = ['nunua-store.onrender.com', 'www.nunua-store.onrender.com']
 
 # CSRF trusted origins: prefer explicit env, else build from ALLOWED_HOSTS
 _env_csrf = os.getenv('CSRF_TRUSTED_ORIGINS')
@@ -66,10 +65,6 @@ DATABASES = {
 # Static files are handled by Whitenoise in Vercel
 # No need for additional static file serving in production
 
-# The Domain URL of Vercel deployment
-DOMAIN = "https://nunua-store.onrender.com"
-CSRF_TRUSTED_ORIGINS = ['https://nunua-store.onrender.com']
-
-# Get domain from environment variable
-# DOMAIN = os.getenv('DOMAIN', '')
-# CSRF_TRUSTED_ORIGINS.extend([f'https://{DOMAIN}', f'https://www.{DOMAIN}'] if DOMAIN else [])
+# Previously the Vercel domain was hard-coded here, but newer
+# configuration uses the environment-driven logic above instead.  Keep
+# this file minimal to avoid accidental overrides.
