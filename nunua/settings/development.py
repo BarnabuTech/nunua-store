@@ -4,7 +4,7 @@ from .base import *
 DEBUG = False  # Set to False to test production-like behavior in development 
 
 # Override ALLOWED_HOSTS for development
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['nunua-store.onrender.com', 'localhost', '127.0.0.1']
 
 # Override CSRF_TRUSTED_ORIGINS for development
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]
