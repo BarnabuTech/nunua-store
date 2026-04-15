@@ -18,6 +18,10 @@ fi
 echo "Running Django migrations..."
 python manage.py migrate --noinput
 
+# Setup Site configuration for allauth
+echo "Configuring Site for allauth..."
+python manage.py setup_site
+
 # Collect static files
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
