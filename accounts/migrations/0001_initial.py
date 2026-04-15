@@ -1,13 +1,11 @@
 # Generated manually for auto-setup
 
 from django.db import migrations
-from django.contrib.auth import get_user_model
-from django.contrib.sites.models import Site
 
 
 def create_superuser(apps, schema_editor):
     """Create superuser automatically on deployment"""
-    User = get_user_model()
+    User = apps.get_model('auth', 'User')
     if not User.objects.filter(username='admin').exists():
         User.objects.create_superuser(
             username='admin',

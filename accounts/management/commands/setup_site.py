@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.sites.models import Site
 from django.conf import settings
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -52,3 +53,31 @@ class Command(BaseCommand):
             )
             logger.error(f'Failed to configure site: {str(e)}')
             raise
+        
+        # Load products if they don't exist
+        try:
+            from products.models import Product
+            product_count = Product.objects.count()
+            
+            if product_count == 0:
+                fixture_path = 'data/products.json'
+                if os.path.exists(fixture_path):
+                    self.stdout.write('Loading products from fixture...')
+                    from django.core.management import call_command
+                    call_command('loaddata', fixture_path)
+                    self.stdout.write(
+                        self.style.SUCCESS('Products loaded successfully!')
+                    )
+                else:
+                    self.stdout.write(
+                        self.style.WARNING(f'No products found and fixture not found at {fixture_path}')
+                    )
+            else:
+                self.stdout.write(
+                    self.style.SUCCESS(f'Products already exist: {product_count} products')
+                )
+        except Exception as e:
+            self.stdout.write(
+                self.style.ERROR(f'Error loading products: {str(e)}')
+            )
+            logger.error(f'Failed to load products: {str(e)}')
