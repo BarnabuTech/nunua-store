@@ -184,7 +184,7 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_STORE_TOKENS = True
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ONLY = False
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True
 ACCOUNT_PASSKEY_LOGIN_ENABLED = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
@@ -213,6 +213,7 @@ MPESA_SHORTCODE = config('MPESA_SHORTCODE', default='')
 MPESA_CONSUMER_KEY = config('MPESA_CONSUMER_KEY', default='')
 MPESA_CONSUMER_SECRET = config('MPESA_CONSUMER_SECRET', default='')
 MPESA_PASSKEY = config('MPESA_PASSKEY', default='')
-MPESA_CALLBACK_URL = config('MPESA_CALLBACK_URL', default='https://yourdomain.com/api/mpesa/callback')
-MPESA_ENVIRONMENT = config('MPESA_ENVIRONMENT', default='production').lower()
-MPESA_API_URL = config('MPESA_API_URL', default='https://api.safaricom.co.ke' if MPESA_ENVIRONMENT == 'production' else 'https://sandbox.safaricom.co.ke')
+MPESA_CALLBACK_URL = config('MPESA_CALLBACK_URL', default='https://nunua-store.onrender.com/payment/mpesa/callback/')
+MPESA_ENVIRONMENT = config('MPESA_ENVIRONMENT', default='sandbox').lower()
+# Auto-select API URL based on environment (sandbox for testing, production for live)
+MPESA_API_URL = config('MPESA_API_URL', default='https://sandbox.safaricom.co.ke' if MPESA_ENVIRONMENT == 'sandbox' else 'https://api.safaricom.co.ke')
